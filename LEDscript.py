@@ -22,11 +22,16 @@ Modified by Jay Donovan 2020
 #Copyright (c) 2019, Douglas Otwell
 #Distributed under the MIT license http://opensource.org/licenses/MIT
 
+
+#BLE requiremetns
 import dbus
 
 from advertisement import Advertisement
 from service import Application, Service, Characteristic, Descriptor
-from gpiozero import CPUTemperature
+
+#GPIO Access
+import RPi.GPIO as GPIO
+
 
 GATT_CHRC_IFACE = "org.bluez.GattCharacteristic1"
 NOTIFY_TIMEOUT = 5000
@@ -59,11 +64,19 @@ class LEDControl(Characteristic):
         output = bytes(value).decode()
         if output == "0":
             print('turning LED off')
+            GPIO.output(26,GPIO.LOW)
         elif output == "1":
             print('turning LED on')
+            GPIO.output(26,GPIO.HIGH)
         else:
             print('try again')
             print(output)
+
+
+#GPIO setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(26,GPIO.OUT)
 
 app = Application()
 app.add_service(BLEService(0))
